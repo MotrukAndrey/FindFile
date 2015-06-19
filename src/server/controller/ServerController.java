@@ -15,6 +15,7 @@ import server.view.ServerView;
 public class ServerController {
 	ServerView serverView;
 	int port;
+	StringBuilder buil = new StringBuilder("");
 	
 	 private DataInputStream in ;
 	 private DataOutputStream out ;
@@ -24,7 +25,8 @@ public class ServerController {
 	public ServerController(ServerView view, int port){
 		serverView = view;
 		this.port = port;
-		
+		buil.append("hellow");
+		serverView.setTextInfo(buil.toString());
 		this.serverView.addConnectListener(new ActionListener(){
 
 			public void actionPerformed(ActionEvent arg0) {
@@ -85,7 +87,11 @@ public class ServerController {
 					OutputStream ostr = socket.getOutputStream();
 					in = new DataInputStream(istr);
 					out = new DataOutputStream(ostr);
+					serverView.setFinishLabel("Подключено, можно отправлять данные поиска");
+					String str = in.readUTF();
+					serverView.setTextInfo(str);
 				} catch (IOException e) {
+					serverView.setFinishLabel("Ошибка");
 					serverView.displayErrorMesege("ERROR!", e.getMessage());
 					}	
 				

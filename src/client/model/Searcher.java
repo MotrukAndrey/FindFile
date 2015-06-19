@@ -6,19 +6,21 @@ import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Searcher {
-	private String resultFile = null;
+	//private String resultFile = null;
 	private String[] fileName = null;
 	private String[] fileExts;
-	private PrintStream printStream;
-	//private StringBuilder build = new StringBuilder(""); 
+	//private PrintStream printStream;
+	private StringBuilder resultFile ; 
 
 	public Searcher() {
 		fileExts = new String[0];
 	}
 
-	public void setOutputFile(String name) {
+	public void setOutputFile(StringBuilder name) {
 		this.resultFile = name;
 	}
 
@@ -35,36 +37,27 @@ public class Searcher {
 	}
 
 	// Поиск по корневым дискам
-	public void find() throws FileNotFoundException {
-		printStream = new PrintStream(new FileOutputStream(resultFile, true),
-				true);
+	public StringBuilder find() throws FileNotFoundException {
+		//printStream = new PrintStream(new FileOutputStream(resultFile, true),
+	//			true);
 		File[] roots = File.listRoots();
 		for (File root : roots) {
 			System.out.println("set disc - " + root.getPath());
 			doFind(root.getPath());
 		}
-		printStream.close();
+		return resultFile;
 	}
 
 	// Сравнивает имена файлов
 	private boolean isFileNameEqual(File file) {
 		if (fileName == null)
 			return isFileExtEqual(file);
-
 		String fullName = file.getName();
-		for(int i = 1; i<fileName.length; i++){
-		if (fullName.contains(".")){
-		String curFileName = fullName.substring(0, fullName.lastIndexOf("."));
-	
-			if (fileName[i].equals(curFileName))
-				return true;
 		
-		return false;
-		}
-		if (fileName[i].equals(fullName))
-			return true;
-		}
-	return false;
+		
+		Pattern p = Pattern.compile("^(" + fileName[1]+").*");
+		Matcher matcher = p.matcher(fullName);
+		return matcher.matches();
 	}
 	
 	// Сравнивает расширения файлов
@@ -110,8 +103,8 @@ public class Searcher {
 
 	// Записывает информацию про найденный файл
 	private void writeToFile(String data) {
-		printStream.println(data);
-		//build.append(data);
+		//printStream.println(data);
+		resultFile.append(data);
 	}
 
 }

@@ -25,6 +25,7 @@ public class ClientController {
 	private  DataOutputStream out = null;
 	private  DataInputStream in = null;
 	private String[] fileNameArray;
+	private StringBuilder resultInfo = new StringBuilder("");
 	
 	public ClientController(ClientView clientView, Searcher searcher){
 		view = clientView;
@@ -58,13 +59,20 @@ public class ClientController {
 				fileNameArray = fileName.split(" ");
 				Searcher s = new Searcher();
 				if(fileNameArray[0].equals("name")){
-				s.setOutputFile("D:\\local.txt");
+				s.setOutputFile(resultInfo);
 				s.setFileName(fileNameArray);
-				s.find();
+				
+				String str = s.find().toString();
+				out.writeUTF(str);
+				out.flush();
 				}else if(fileNameArray[0].equals("ext")){
-					s.setOutputFile("D:\\local.txt");
+					s.setOutputFile(resultInfo);
 					s.setFileExts(fileNameArray);
 					s.find();
+					String str = fileNameArray.toString();
+					out.writeUTF(str);
+					out.flush();
+					
 				}
 			} catch (UnknownHostException e) {
 				view.displayErrorMesege("yнеизвесный ip адрес", e.getMessage());
